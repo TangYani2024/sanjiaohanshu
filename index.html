@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三角函数可视化</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+        }
+        .circle {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .point {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+        }
+        .point:hover {
+            background: #ff0000;
+        }
+        .info {
+            margin-left: 50px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .info h2 {
+            margin-top: 0;
+        }
+        .info p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 圆环 -->
+        <div class="circle" id="circle">
+            <div class="point" id="point" style="top: 150px; left: 150px;"></div>
+        </div>
+        <!-- 显示信息 -->
+        <div class="info" id="info">
+            <h2>三角函数值</h2>
+            <p>角度: <span id="angle">0°</span></p>
+            <p>sin(θ) = <span id="sin-value">0</span></p>
+            <p>cos(θ) = <span id="cos-value">1</span></p>
+            <p>tan(θ) = <span id="tan-value">0</span></p>
+            <h2>公式</h2>
+            <p>sin(θ) = 对边 / 斜边</p>
+            <p>cos(θ) = 邻边 / 斜边</p>
+            <p>tan(θ) = 对边 / 邻边</p>
+        </div>
+    </div>
+
+    <script>
+        const circle = document.getElementById('circle');
+        const point = document.getElementById('point');
+        const info = document.getElementById('info');
+        const angleDisplay = document.getElementById('angle');
+        const sinValue = document.getElementById('sin-value');
+        const cosValue = document.getElementById('cos-value');
+        const tanValue = document.getElementById('tan-value');
+
+        const radius = 150; // 圆环半径
+        let currentAngle = 0; // 当前角度
+
+        // 更新点的位置和三角函数值
+        function updatePoint(angle) {
+            const radians = (angle * Math.PI) / 180; // 角度转弧度
+            const x = radius + radius * Math.cos(radians); // x坐标
+            const y = radius - radius * Math.sin(radians); // y坐标（因为y轴向下）
+
+            point.style.left = `${x}px`;
+            point.style.top = `${y}px`;
+
+            // 更新三角函数值
+            const sinVal = Math.sin(radians).toFixed(2);
+            const cosVal = Math.cos(radians).toFixed(2);
+            const tanVal = Math.tan(radians).toFixed(2);
+
+            angleDisplay.textContent = `${angle}°`;
+            sinValue.textContent = sinVal;
+            cosValue.textContent = cosVal;
+            tanValue.textContent = tanVal;
+        }
+
+        // 初始加载
+        updatePoint(currentAngle);
+
+        // 点击圆环更新角度
+        circle.addEventListener('click', (event) => {
+            const rect = circle.getBoundingClientRect();
+            const centerX = rect.left + radius;
+            const centerY = rect.top + radius;
+            const clickX = event.clientX - centerX;
+            const clickY = centerY - event.clientY; // y轴反转
+
+            // 计算角度
+            const angle = Math.atan2(clickY, clickX) * (180 / Math.PI);
+            currentAngle = angle < 0 ? angle + 360 : angle; // 转换为0-360度
+
+            updatePoint(currentAngle);
+        });
+    </script>
+</body>
+</html>
